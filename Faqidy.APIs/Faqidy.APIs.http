@@ -1,0 +1,6 @@
+@Faqidy.APIs_HostAddress = http://localhost:5277
+
+GET {{Faqidy.APIs_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

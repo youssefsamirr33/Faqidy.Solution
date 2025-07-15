@@ -7,15 +7,18 @@ namespace Faqidy.APIs
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            #region Services Container
             // Add services to the container.
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddSwaggerGen(); 
+            #endregion
 
             var app = builder.Build();
 
+            #region Configure HTTP request pipeline
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
@@ -30,7 +33,8 @@ namespace Faqidy.APIs
 
             app.MapControllers();
 
-            app.Run();
+            app.Run(); 
+            #endregion
         }
     }
 }

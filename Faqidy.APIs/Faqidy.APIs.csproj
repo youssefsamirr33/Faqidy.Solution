@@ -14,4 +14,8 @@
     <Folder Include="Controllers\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Faqidy.Infrastructure.Persistance\Faqidy.Infrastructure.Persistance.csproj" />
+  </ItemGroup>
+
 </Project>

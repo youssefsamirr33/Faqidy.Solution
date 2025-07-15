@@ -1,3 +1,4 @@
+using Faqidy.Infrastructure.Persistance;
 
 namespace Faqidy.APIs
 {
@@ -9,11 +10,14 @@ namespace Faqidy.APIs
 
             #region Services Container
             // Add services to the container.
-
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen(); 
+            builder.Services.AddSwaggerGen();
+
+            //Configure the persistance services in dependancy injection container
+            builder.Services.AddApplicationPersistanceServices(builder.Configuration);
+
             #endregion
 
             var app = builder.Build();

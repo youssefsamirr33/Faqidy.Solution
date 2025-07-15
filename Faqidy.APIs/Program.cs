@@ -1,10 +1,12 @@
+using Faqidy.APIs.Extentions;
 using Faqidy.Infrastructure.Persistance;
+using Faqidy.Infrastructure.Persistance.Data;
 
 namespace Faqidy.APIs
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +23,10 @@ namespace Faqidy.APIs
             #endregion
 
             var app = builder.Build();
+
+            #region Database Initializer and Data Seeding 
+            await app.Initializers();
+            #endregion
 
             #region Configure HTTP request pipeline
             // Configure the HTTP request pipeline.

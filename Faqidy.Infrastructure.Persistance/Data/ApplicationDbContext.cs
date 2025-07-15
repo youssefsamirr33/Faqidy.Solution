@@ -5,9 +5,9 @@ using System.Reflection;
 
 namespace Faqidy.Infrastructure.Persistance.Data
 {
-    public class ApplicationDbContext : IdentityDbContext<ApplicationUser , ApllicationRole , string>
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser , ApplicationRole , string>
     {
-        public ApplicationDbContext(DbContextOptions options)
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             :base(options)
         {
 

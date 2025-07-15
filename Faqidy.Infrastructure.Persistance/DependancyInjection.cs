@@ -1,4 +1,6 @@
-﻿using Faqidy.Infrastructure.Persistance.Data;
+﻿using Faqidy.Domain.Contract;
+using Faqidy.Domain.Entities.IdentityModule;
+using Faqidy.Infrastructure.Persistance.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,7 +16,7 @@ namespace Faqidy.Infrastructure.Persistance
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
             });
 
-            services.AddIdentityCore<ApplicationDbContext>(options =>
+            services.AddIdentityCore<ApplicationUser>(options =>
             {
                 options.Password.RequiredLength = 8;
                 options.Password.RequireNonAlphanumeric = true;
@@ -25,6 +27,8 @@ namespace Faqidy.Infrastructure.Persistance
                 options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromSeconds(30);
 
             }).AddEntityFrameworkStores<ApplicationDbContext>();
+
+            services.AddScoped(typeof(IDatabaseInitializer), typeof(DatabaseInitializer));
 
             return services;
         }

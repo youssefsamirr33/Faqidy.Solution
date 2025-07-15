@@ -9,7 +9,7 @@ namespace Faqidy.Infrastructure.Persistance.Data.Config.Identity
         public void Configure(Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder<ApplicationRole> builder)
         {
             builder.Property(u => u.Description).HasMaxLength(200);
-            builder.Property(u => u.CreatedAt).HasDefaultValue("GETUTCDATE");
+            builder.Property(u => u.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
         }
     }
 }

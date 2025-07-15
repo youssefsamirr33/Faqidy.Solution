@@ -14,8 +14,8 @@ namespace Faqidy.Infrastructure.Persistance.Data.Config.Common
             builder.Property(b => b.CreatedBy).IsRequired().HasMaxLength(100);
             builder.Property(b => b.LastModifiedBy).IsRequired().HasMaxLength(100);
 
-            builder.Property(b => b.CreateOn).HasDefaultValue("GETUTCDATE");
-            builder.Property(b => b.LastModifiedOn).HasDefaultValue("GETUTCDATE");
+            builder.Property(b => b.CreateOn).HasDefaultValueSql("GETUTCDATE()");
+            builder.Property(b => b.LastModifiedOn).HasComputedColumnSql("GETUTCDATE()");
         }
     }
 }

@@ -18,8 +18,8 @@ namespace Faqidy.Infrastructure.Persistance.Data.Config.Identity
 
             builder.Property(u => u.NationalId).HasMaxLength(100);
             builder.Property(u => u.Country).HasMaxLength(100).HasDefaultValue("Egypt");
-            builder.Property(u => u.CreatedAt).HasDefaultValue("GETUTCDATE");
-            builder.Property(u => u.UpdatedAt).HasDefaultValue("GETUTCDATE");
+            builder.Property(u => u.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
+            builder.Property(u => u.UpdatedAt).HasComputedColumnSql("GETUTCDATE()");
             builder.Property(u => u.IsVerified).HasDefaultValue<bool>(false);
         }
     }

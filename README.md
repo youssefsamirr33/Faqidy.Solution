@@ -1,0 +1,1 @@
+# Faqidy.Solution

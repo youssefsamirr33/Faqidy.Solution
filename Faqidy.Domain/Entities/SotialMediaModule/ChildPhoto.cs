@@ -14,11 +14,11 @@ namespace Faqidy.Domain.Entities.sotialMediaModule
         public required string PhotoUrl { get; set; }
         public DateTime UploadDate { get; set; }
 
-        public string ChildId { get; set; }
-        public virtual MissingChild Child { get; set; }
+        public Guid? ChildId { get; set; }
+        public virtual MissingChild? Child { get; set; }
 
-        public required string UploadedBy { get; set; }
-        public virtual ApplicationUser UploadedByUser { get; set; }
+        public string? UploadedBy { get; set; }
+        public virtual ApplicationUser? UploadedByUser { get; set; }
 
     }
 }

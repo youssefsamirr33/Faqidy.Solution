@@ -21,7 +21,7 @@ namespace Faqidy.Domain.Entities.IdentityModule
         public virtual ICollection<MissingChild> MissingChilde { get; set; } = new HashSet<MissingChild>();
         public virtual ICollection<SocialPost> Posts { get; set; } = new HashSet<SocialPost>();
         public virtual ICollection<PostInterActive> InterActives { get; set; } = new HashSet<PostInterActive>();
-        public virtual ICollection<Comment> Comments { get; set; } = new HashSet<Comment>();
+        public virtual ICollection<Comment>? Comments { get; set; } = new HashSet<Comment>();
         
 
     }

@@ -13,7 +13,7 @@ namespace Faqidy.Domain.Entities.sotialMediaModule
     {
         public InterActiveType InterActiveType { get; set; }
 
-        public required string PostId { get; set; }
+        public required Guid PostId { get; set; }
         public virtual SocialPost Post { get; set; }
 
         public required string UserId { get; set; }

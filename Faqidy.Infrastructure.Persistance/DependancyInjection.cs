@@ -1,6 +1,7 @@
 ﻿using Faqidy.Domain.Contract;
 using Faqidy.Domain.Entities.IdentityModule;
 using Faqidy.Infrastructure.Persistance.Data;
+using Faqidy.Infrastructure.Persistance.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -29,6 +30,7 @@ namespace Faqidy.Infrastructure.Persistance
             }).AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.AddScoped(typeof(IDatabaseInitializer), typeof(DatabaseInitializer));
+            services.AddScoped(typeof(IGenaricRepository<,>), typeof(GenaricRepository<,>));
 
             return services;
         }

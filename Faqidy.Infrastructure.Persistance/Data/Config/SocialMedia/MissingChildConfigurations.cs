@@ -21,7 +21,7 @@ namespace Faqidy.Infrastructure.Persistance.Data.Config.SocialMedia
             builder.HasOne(c => c.Reporter)
                 .WithMany(u => u.MissingChilde)
                 .HasForeignKey(c => c.ReporterId)
-                .OnDelete(DeleteBehavior.SetNull);
+                .OnDelete(DeleteBehavior.NoAction);
 
 
 

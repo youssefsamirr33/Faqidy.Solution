@@ -10,7 +10,6 @@
     <Folder Include="Data\Migrations\" />
     <Folder Include="Data\DataSeed\" />
     <Folder Include="Unit Of Work\" />
-    <Folder Include="Repositories\" />
   </ItemGroup>
 
   <ItemGroup>

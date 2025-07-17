@@ -16,10 +16,10 @@ namespace Faqidy.Domain.Entities.sotialMediaModule
         public int ShareCounts { get; set; }
         public int ViewCounts { get; set; }
 
-        public string USerId { get; set; }
-        public virtual ApplicationUser User { get; set; }
-        public required string ChildId { get; set; }
-        public virtual MissingChild Child { get; set; }
+        public string? USerId { get; set; }
+        public virtual ApplicationUser? User { get; set; }
+        public Guid? ChildId { get; set; }
+        public virtual MissingChild? Child { get; set; }
         public virtual ICollection<PostInterActive> InterAction { get; set; } = new HashSet<PostInterActive>();
         public virtual ICollection<Comment> Comments { get; set; } = new HashSet<Comment>();
 

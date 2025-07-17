@@ -26,8 +26,8 @@ namespace Faqidy.Domain.Entities.SotialMediaModule
         public bool IsVerified { get; set; }
         public string ContactInfo { get; set; } // json string 
 
-        public string ReporterId { get; set; } // FK 
-        public virtual ApplicationUser Reporter { get; set; }
+        public string? ReporterId { get; set; } // FK 
+        public virtual ApplicationUser? Reporter { get; set; }
 
         public virtual ICollection<ChildPhoto> Photos { get; set; } = new HashSet<ChildPhoto>();
         public virtual ICollection<SocialPost> Posts { get; set; } = new HashSet<SocialPost>();

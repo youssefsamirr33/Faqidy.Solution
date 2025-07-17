@@ -4,6 +4,7 @@ using Faqidy.Infrastructure.Persistance.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Faqidy.Infrastructure.Persistance.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250717033518_AddSocialMediaEntities")]
+    partial class AddSocialMediaEntities
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -253,6 +256,7 @@ namespace Faqidy.Infrastructure.Persistance.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ReporterId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("SkinTone")
@@ -278,7 +282,7 @@ namespace Faqidy.Infrastructure.Persistance.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("ChildId")
+                    b.Property<Guid>("ChildId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("PhotoUrl")
@@ -291,6 +295,7 @@ namespace Faqidy.Infrastructure.Persistance.Data.Migrations
                         .HasDefaultValueSql("GETUTCDATE()");
 
                     b.Property<string>("UploadedBy")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
@@ -418,7 +423,7 @@ namespace Faqidy.Infrastructure.Persistance.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("ChildId")
+                    b.Property<Guid>("ChildId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("CommentsCounts")
@@ -468,6 +473,7 @@ namespace Faqidy.Infrastructure.Persistance.Data.Migrations
                         .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("USerId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("ViewCounts")
@@ -593,7 +599,8 @@ namespace Faqidy.Infrastructure.Persistance.Data.Migrations
                     b.HasOne("Faqidy.Domain.Entities.IdentityModule.ApplicationUser", "Reporter")
                         .WithMany("MissingChilde")
                         .HasForeignKey("ReporterId")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .IsRequired();
 
                     b.Navigation("Reporter");
                 });
@@ -603,12 +610,14 @@ namespace Faqidy.Infrastructure.Persistance.Data.Migrations
                     b.HasOne("Faqidy.Domain.Entities.SotialMediaModule.MissingChild", "Child")
                         .WithMany("Photos")
                         .HasForeignKey("ChildId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .IsRequired();
 
                     b.HasOne("Faqidy.Domain.Entities.IdentityModule.ApplicationUser", "UploadedByUser")
                         .WithMany()
                         .HasForeignKey("UploadedBy")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .IsRequired();
 
                     b.Navigation("Child");
 
@@ -666,12 +675,14 @@ namespace Faqidy.Infrastructure.Persistance.Data.Migrations
                     b.HasOne("Faqidy.Domain.Entities.SotialMediaModule.MissingChild", "Child")
                         .WithMany("Posts")
                         .HasForeignKey("ChildId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .IsRequired();
 
                     b.HasOne("Faqidy.Domain.Entities.IdentityModule.ApplicationUser", "User")
                         .WithMany("Posts")
                         .HasForeignKey("USerId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .IsRequired();
 
                     b.Navigation("Child");
 

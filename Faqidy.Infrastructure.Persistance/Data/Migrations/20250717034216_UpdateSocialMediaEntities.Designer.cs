@@ -4,6 +4,7 @@ using Faqidy.Infrastructure.Persistance.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Faqidy.Infrastructure.Persistance.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250717034216_UpdateSocialMediaEntities")]
+    partial class UpdateSocialMediaEntities
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -253,6 +256,7 @@ namespace Faqidy.Infrastructure.Persistance.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ReporterId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("SkinTone")
@@ -593,7 +597,8 @@ namespace Faqidy.Infrastructure.Persistance.Data.Migrations
                     b.HasOne("Faqidy.Domain.Entities.IdentityModule.ApplicationUser", "Reporter")
                         .WithMany("MissingChilde")
                         .HasForeignKey("ReporterId")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Reporter");
                 });

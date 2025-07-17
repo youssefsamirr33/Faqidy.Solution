@@ -1,11 +1,7 @@
-﻿using Faqidy.Domain.Enums;
+﻿using Faqidy.Domain.Entities.sotialMediaModule;
+using Faqidy.Domain.Entities.SotialMediaModule;
+using Faqidy.Domain.Enums;
 using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Faqidy.Domain.Entities.IdentityModule
 {
     public class ApplicationUser : IdentityUser
@@ -20,6 +16,13 @@ namespace Faqidy.Domain.Entities.IdentityModule
         public string? Country { get; set; } 
         public bool IsVerified { get; set; } 
         public DateTime CreatedAt { get; set; } 
-        public DateTime UpdatedAt { get; set; } 
+        public DateTime UpdatedAt { get; set; }
+
+        public virtual ICollection<MissingChild> MissingChilde { get; set; } = new HashSet<MissingChild>();
+        public virtual ICollection<SocialPost> Posts { get; set; } = new HashSet<SocialPost>();
+        public virtual ICollection<PostInterActive> InterActives { get; set; } = new HashSet<PostInterActive>();
+        public virtual ICollection<Comment> Comments { get; set; } = new HashSet<Comment>();
+        
+
     }
 }

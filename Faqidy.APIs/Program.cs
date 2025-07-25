@@ -1,6 +1,9 @@
 using Faqidy.APIs.Extentions;
+using Faqidy.Application.Mapping;
 using Faqidy.Infrastructure.Persistance;
 using Faqidy.Infrastructure.Persistance.Data;
+using MediatR;
+using System.Reflection;
 
 namespace Faqidy.APIs
 {
@@ -19,6 +22,11 @@ namespace Faqidy.APIs
 
             //Configure the persistance services in dependancy injection container
             builder.Services.AddApplicationPersistanceServices(builder.Configuration);
+            builder.Services.AddAutoMapper(typeof(MappingProfile));
+            builder.Services.AddMediatR(configurations =>
+            {
+                configurations.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
+            });
 
             #endregion
 

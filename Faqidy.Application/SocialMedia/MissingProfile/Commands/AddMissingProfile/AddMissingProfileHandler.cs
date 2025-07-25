@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
+using Faqidy.Application.Abstraction.Services;
 using Faqidy.Application.SocialMedia.MissingProfile.DTOs;
 using Faqidy.Domain.Contract;
+using Faqidy.Domain.Entities.sotialMediaModule;
 using Faqidy.Domain.Entities.SotialMediaModule;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -17,12 +19,15 @@ namespace Faqidy.Application.SocialMedia.MissingProfile.Commands.AddMissingProfi
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly ILogger<AddMissingProfileHandler> _logger;
+        private readonly IPhotosServices _photosServices;
 
-        public AddMissingProfileHandler(IUnitOfWork unitOfWork, IMapper mapper, ILogger<AddMissingProfileHandler> logger)
+        public AddMissingProfileHandler(IUnitOfWork unitOfWork, IMapper mapper, ILogger<AddMissingProfileHandler> logger
+            , IPhotosServices photosServices)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _logger = logger;
+            _photosServices = photosServices;
         }
 
         async Task<MissingChildDto> IRequestHandler<AddMissingProfileCommands, MissingChildDto>.Handle(AddMissingProfileCommands request, CancellationToken cancellationToken)
@@ -37,6 +42,7 @@ namespace Faqidy.Application.SocialMedia.MissingProfile.Commands.AddMissingProfi
                 try
                 {
                     // save photo with called photo service  
+                    photoPaths = await _photosServices.SavePhotosAsync(request.Photos);
                 }
                 catch (Exception ex)
                 {
@@ -45,6 +51,11 @@ namespace Faqidy.Application.SocialMedia.MissingProfile.Commands.AddMissingProfi
                 }
             }
             // 3. Add photo entities to missing child
+            missingChild.Photos = photoPaths.Select(path => new ChildPhoto
+            {
+                PhotoUrl = path,
+                UploadDate = DateTime.UtcNow
+            }).ToList();
 
 
             // save missing child info 
@@ -64,6 +75,18 @@ namespace Faqidy.Application.SocialMedia.MissingProfile.Commands.AddMissingProfi
 
             // return missing child Dto
             var ReturnedMissingchild = _mapper.Map<MissingChildDto>(missingChild);
+
+            if(ReturnedMissingchild.ChildPhotos is not null)
+            {
+                foreach(var photoDto in ReturnedMissingchild.ChildPhotos)
+                {
+                    var orginalPhoto = missingChild.Photos.FirstOrDefault(p => p.Id == photoDto.Id);
+                    if(orginalPhoto is not null)
+                    {
+                        photoDto.PhotoUrl = _photosServices.GetPhotoUrl(orginalPhoto.PhotoUrl);
+                    }
+                }
+            }
 
             return ReturnedMissingchild;
 

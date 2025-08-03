@@ -16,7 +16,7 @@ namespace Faqidy.APIs.Controllers
 
 
         [HttpPost("NewMissingProfile")]
-        public async Task<ActionResult<object>> CreateNewMissingProfile(AddMissingProfileCommands command)
+        public async Task<ActionResult<object>> CreateNewMissingProfile([FromForm]AddMissingProfileCommands command)
         {
             var sender = await _mediator.Send(command);
             return Ok(sender);

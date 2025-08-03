@@ -61,6 +61,10 @@ namespace Faqidy.Application.SocialMedia.MissingProfile.Commands.AddMissingProfi
             // save missing child info 
             try
             {
+                // demo 
+                missingChild.CreatedBy = "youssef";
+                missingChild.LastModifiedBy = "youssef";
+                // demo 
                 var repo = _unitOfWork.GetRepository<MissingChild, Guid>();
                 await repo.AddAsync(missingChild);
                 var result = await _unitOfWork.CompleteAsync();

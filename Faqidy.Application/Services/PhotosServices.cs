@@ -18,7 +18,7 @@ namespace Faqidy.Application.Services
         {
             _uploadFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", _configuration["FileStorage:UploadedFolder"]);
 
-            if(Directory.Exists(_uploadFolder) )
+            if(!Directory.Exists(_uploadFolder) )
             {
                 Directory.CreateDirectory(_uploadFolder);
             }
@@ -53,13 +53,13 @@ namespace Faqidy.Application.Services
                 {
                     await photo.CopyToAsync(stream);
                 }
-                savePhotoPaths.Add(filePath);
+                savePhotoPaths.Add(fileName);
             }
 
             return savePhotoPaths;
         }
         public string GetPhotoUrl(string photoPath)
-            => $"{configuration["ApiUrl"]}/{photoPath}";
+            => $"{configuration["ApiUrl"]}/{configuration["FileStorage:UploadedFolder"]}/{photoPath}";
 
     
     }

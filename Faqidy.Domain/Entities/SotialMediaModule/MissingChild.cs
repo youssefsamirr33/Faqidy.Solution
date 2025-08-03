@@ -11,7 +11,7 @@ namespace Faqidy.Domain.Entities.SotialMediaModule
         public int AgeAtDisappearance { get; set; }
         public int? CurrentEstimatedAge { get; set; }
         public Gender Gender { get; set; }
-        public DateOnly? BirthDate { get; set; }
+        public DateTime? BirthDate { get; set; }
         public DateTime DisappearanceDate { get; set; }
         public string? DisappearanceLocation { get; set; }
         public string DisappearanceCity { get; set; }

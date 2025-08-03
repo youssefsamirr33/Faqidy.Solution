@@ -16,7 +16,7 @@ namespace Faqidy.Application.SocialMedia.MissingProfile.Commands.AddMissingProfi
         int AgeAtDisappearance,
         int CurrentEstimatedAge,
         Gender Gender,
-        DateOnly? BirthDate,
+        DateTime? BirthDate,
         DateTime DisappearanceDate,
         string? DisappearanceLocation,
         string DisappearanceCity,

@@ -1,9 +1,12 @@
+using Faqidy.APIs.Errors;
 using Faqidy.APIs.Extentions;
+using Faqidy.APIs.Middlewares;
 using Faqidy.Application;
 using Faqidy.Application.Mapping;
 using Faqidy.Infrastructure.Persistance;
 using Faqidy.Infrastructure.Persistance.Data;
 using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using System.Reflection;
 
 namespace Faqidy.APIs
@@ -16,7 +19,24 @@ namespace Faqidy.APIs
 
             #region Services Container
             // Add services to the container.
-            builder.Services.AddControllers();
+            builder.Services.AddControllers()
+                            .ConfigureApiBehaviorOptions(options =>
+                            {
+                                options.SuppressModelStateInvalidFilter = false;
+                                options.InvalidModelStateResponseFactory = (actioncontext) =>
+                                {
+                                    var errors = actioncontext.ModelState.Where(p => p.Value!.Errors.Count > 0)
+                                    .Select(p => new ValidationError
+                                    {
+                                        Field = p.Key,
+                                        Errors = p.Value!.Errors.Select(e => e.ErrorMessage)
+                                    });
+                                    return new BadRequestObjectResult(new ApiValidationErrorResponse
+                                    {
+                                        Errors = errors
+                                    });
+                                };
+                            });
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
@@ -40,6 +60,8 @@ namespace Faqidy.APIs
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
+            app.UseExeptionHandlerMiddleware();
 
             app.UseHttpsRedirection();
 

@@ -65,8 +65,10 @@ namespace Faqidy.APIs
 
             app.UseHttpsRedirection();
 
+
             app.UseAuthorization();
 
+            app.UseStatusCodePagesWithReExecute("/Errors/{0}");
 
             app.MapControllers();
 

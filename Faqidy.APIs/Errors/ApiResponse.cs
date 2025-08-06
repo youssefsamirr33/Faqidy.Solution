@@ -46,6 +46,9 @@ namespace Faqidy.APIs.Errors
             };
         }
 
-      
+        public override string ToString()
+        {
+            return JsonSerializer.Serialize(this);
+        }
     }
 }

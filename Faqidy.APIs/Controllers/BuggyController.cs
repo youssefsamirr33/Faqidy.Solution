@@ -1,4 +1,5 @@
 ﻿using Faqidy.APIs.Errors;
+using Faqidy.Application.Exceptions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,13 +12,13 @@ namespace Faqidy.APIs.Controllers
         [HttpGet("not-found")]
         public ActionResult NotFoundError()
         {
-            return NotFound(new ApiResponse(404));
+            throw new NotFoundException();
         }
 
         [HttpGet("bad-request")]
         public ActionResult BadRequestError()
         {
-            return BadRequest(new ApiResponse(400));
+            throw new BadRequestException();
         }
 
         [HttpGet("validation-error/{id}")]

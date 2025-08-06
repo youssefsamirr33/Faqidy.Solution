@@ -1,4 +1,5 @@
 ﻿using Faqidy.APIs.Errors;
+using Faqidy.Application.Exceptions;
 using Microsoft.AspNetCore.Http;
 using System.Net;
 
@@ -21,8 +22,34 @@ namespace Faqidy.APIs.Middlewares
             try
             {
                 // logic 
-                await _next(context);   
+                await _next(context);
                 // logic
+                #region Handle not found edpoint 
+                //// handle not found endpoint 
+                //if(context.Response.StatusCode == (int)HttpStatusCode.NotFound)
+                //{
+                //    context.Response.ContentType = "application/json";
+                //    var response = new ApiResponse((int)HttpStatusCode.NotFound, $"The Requested endpoint: {context.Request.Path} is not found.");
+                //    await context.Response.WriteAsync(response.ToString());
+                //} 
+                #endregion
+            }
+            catch(NotFoundException ex)
+            {
+                context.Response.StatusCode = (int)HttpStatusCode.NotFound;
+                context.Response.ContentType = "application/json";
+
+                var response = new ApiResponse((int)HttpStatusCode.NotFound , ex.Message);
+                await context.Response.WriteAsync(response.ToString());
+
+            }
+            catch(BadRequestException ex)
+            {
+                context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                context.Response.ContentType = "application/json";
+
+                var response = new ApiResponse((int) HttpStatusCode.BadRequest , ex.Message);
+                await context.Response.WriteAsync(response.ToString());
             }
             catch (Exception ex)
             {

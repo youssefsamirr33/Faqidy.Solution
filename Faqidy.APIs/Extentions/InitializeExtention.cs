@@ -15,11 +15,12 @@ namespace Faqidy.APIs.Extentions
             try
             {
                 await _dbInitializer.Initialize();
+                await _dbInitializer.Seed();
             }
             catch (Exception ex)
             {
                 var logger = loggerFactory.CreateLogger<Program>();
-                logger.LogError(ex, "That Error When occured apply the migrations [ update databas]");
+                logger.LogError(ex, "That Error When occured apply the migrations [ update databas or seeding data]");
             }
 
             return app;

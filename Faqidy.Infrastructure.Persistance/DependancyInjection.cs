@@ -19,25 +19,8 @@ namespace Faqidy.Infrastructure.Persistance
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
             });
 
-            services.AddIdentityCore<ApplicationUser>(options =>
-            {
-                options.SignIn.RequireConfirmedEmail = true;
-                options.SignIn.RequireConfirmedPhoneNumber = true;
-                options.SignIn.RequireConfirmedAccount = true;
-
-                options.User.RequireUniqueEmail = true;
-
-                options.Password.RequiredLength = 8;
-                options.Password.RequireNonAlphanumeric = true;
-                options.Password.RequireDigit = true;
-                options.Password.RequireUppercase = true;
-                options.Password.RequireLowercase = true;
-
-                options.Lockout.MaxFailedAccessAttempts = 5;
-                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromSeconds(30);
-
-            }).AddRoles<IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>();
-
+            // configure the identity system 
+            
             services.AddScoped(typeof(IDatabaseInitializer), typeof(DatabaseInitializer));
             services.AddScoped(typeof(IGenaricRepository<,>), typeof(GenaricRepository<,>));
             services.AddScoped(typeof(IUnitOfWork), typeof(UnitOfWork));

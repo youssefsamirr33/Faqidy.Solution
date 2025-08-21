@@ -51,6 +51,14 @@ namespace Faqidy.APIs.Middlewares
                 var response = new ApiResponse((int) HttpStatusCode.BadRequest , ex.Message);
                 await context.Response.WriteAsync(response.ToString());
             }
+            catch(UnAuthorizeException ex)
+            {
+                context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                context.Response.ContentType = "application/json";
+
+                var response = new ApiResponse((int)HttpStatusCode.Unauthorized, ex.Message);
+                await context.Response.WriteAsync(response.ToString());
+            }
             catch (Exception ex)
             {
                 #region Loggign TODO

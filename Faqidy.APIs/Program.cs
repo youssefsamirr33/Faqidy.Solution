@@ -44,6 +44,9 @@ namespace Faqidy.APIs
             //Configure the persistance services in dependancy injection container
             builder.Services.AddApplicationPersistanceServices(builder.Configuration);
             builder.Services.AddApplicationLayerServices();
+            builder.Services.AddIdentitySystemServices(builder.Configuration);
+
+            builder.Services.AddDistributedMemoryCache();
 
             #endregion
 
@@ -66,9 +69,10 @@ namespace Faqidy.APIs
             app.UseHttpsRedirection();
 
 
-            app.UseAuthorization();
-
             app.UseStatusCodePagesWithReExecute("/Errors/{0}");
+
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.MapControllers();
 

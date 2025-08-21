@@ -1,6 +1,8 @@
 ﻿using Faqidy.Application.Abstraction.Services;
+using Faqidy.Application.Abstraction.Services.Auth;
 using Faqidy.Application.Mapping;
 using Faqidy.Application.Services;
+using Faqidy.Application.Services.Auth;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -22,6 +24,7 @@ namespace Faqidy.Application
                 configurations.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
             });
             services.AddScoped(typeof(IPhotosServices), typeof(PhotosServices));
+            services.AddScoped(typeof(IAuthService), typeof(AuthServices));
             return services;
         }
     }

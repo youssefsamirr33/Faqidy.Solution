@@ -3,6 +3,7 @@ using Faqidy.APIs.Extentions;
 using Faqidy.APIs.Middlewares;
 using Faqidy.Application;
 using Faqidy.Application.Mapping;
+using Faqidy.Infrastructure;
 using Faqidy.Infrastructure.Persistance;
 using Faqidy.Infrastructure.Persistance.Data;
 using MediatR;
@@ -42,11 +43,11 @@ namespace Faqidy.APIs
             builder.Services.AddSwaggerGen();
 
             //Configure the persistance services in dependancy injection container
-            builder.Services.AddApplicationPersistanceServices(builder.Configuration);
-            builder.Services.AddApplicationLayerServices();
-            builder.Services.AddIdentitySystemServices(builder.Configuration);
-
-            builder.Services.AddDistributedMemoryCache();
+            builder.Services.AddApplicationPersistanceServices(builder.Configuration)
+                            .AddApplicationLayerServices()
+                            .AddIdentitySystemServices(builder.Configuration)
+                            .AddInfrastructureServices(builder.Configuration);
+            
 
             #endregion
 

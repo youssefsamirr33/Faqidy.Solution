@@ -20,6 +20,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Faqidy.Application.Abstraction\Faqidy.Application.Abstraction.csproj" />
     <ProjectReference Include="..\Faqidy.Infrastructure.Persistance\Faqidy.Infrastructure.Persistance.csproj" />
+    <ProjectReference Include="..\Faqidy.Infrastructure\Faqidy.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Faqidy.Application.Abstraction.DTOs.Otp
+namespace Faqidy.Domain.Entities.Otp
 {
     public class OtpPayload
     {

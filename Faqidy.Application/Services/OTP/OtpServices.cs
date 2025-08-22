@@ -1,23 +1,17 @@
-﻿using Faqidy.Application.Abstraction.DTOs.Otp;
-using Faqidy.Application.Abstraction.Services.OTP;
+﻿using Faqidy.Application.Abstraction.Services.OTP;
 using Faqidy.Application.Exceptions;
+using Faqidy.Domain.Contract.Redis_Repo;
 using Faqidy.Domain.Entities.IdentityModule;
+using Faqidy.Domain.Entities.Otp;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Caching.Distributed;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Cryptography;
-using System.Text;
-using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace Faqidy.Application.Services.OTP
 {
-    public class OtpServices(IDistributedCache _cache , UserManager<ApplicationUser> _userManager) : IOtpServices
+    public class OtpServices(UserManager<ApplicationUser> _userManager , IRedisRepository _redis) : IOtpServices
     {
 
-        public async Task<string> GenerateAndStoreOtp(string user_id, TimeSpan timeForExp)
+        public async Task<string> GenerateAndStoreOtp(string user_id, TimeSpan timeToLive)
         {
             var code = GenerateRandomNumber();
             var otp = new OtpPayload()
@@ -25,13 +19,8 @@ namespace Faqidy.Application.Services.OTP
                 code = code,
                 exp = DateTime.UtcNow,
             };
-
-            var json = JsonSerializer.Serialize(otp);
-            await _cache.SetStringAsync(user_id, json, new DistributedCacheEntryOptions
-            {
-                AbsoluteExpirationRelativeToNow = timeForExp
-            });
-
+            await _redis.AddOrUpdateAsyn(user_id , otp , timeToLive);
+            
             return code;
         }
 
@@ -40,33 +29,28 @@ namespace Faqidy.Application.Services.OTP
             var user = await _userManager.FindByIdAsync(user_id);
             if (user is null) throw new NotFoundException($"The user with id: {user_id} is not found. ");
 
-            var json = await _cache.GetStringAsync(user_id);
-            if (json is null) throw new BadRequestException("not valid otp");
-            var otp = JsonSerializer.Deserialize<OtpPayload>(json!);
+            var otp = await _redis.GetAsync(user_id);
+            if (otp is null) throw new BadRequestException("not valid otp");
 
             if(DateTime.UtcNow > otp!.exp)
             {
-                await _cache.RemoveAsync(user_id);
+                await _redis.RemoveAsync(user_id);
                 throw new BadRequestException("The opt is expired");
             }
 
             otp.Attempts++;
             if(otp.Attempts > MaxAttempts)
             {
-                await _cache.RemoveAsync(user_id);
+                await _redis.RemoveAsync(user_id);
                 throw new BadRequestException("Too many attemps");
             }
             if(!string.Equals(code , otp.code, StringComparison.OrdinalIgnoreCase))
             {
-                var update = JsonSerializer.Serialize(otp);
-                await _cache.SetStringAsync(user_id, update, new DistributedCacheEntryOptions
-                {
-                    AbsoluteExpirationRelativeToNow = TimeSpan.Parse(otp.exp.ToString())
-                });
+                await _redis.AddOrUpdateAsyn(user_id, otp, TimeSpan.Parse(otp.exp.ToString()));
                 throw new BadRequestException("Invalid otp");
             }
 
-            await _cache.RemoveAsync(user_id);
+            await _redis.RemoveAsync(user_id);
             user.PhoneNumberConfirmed = true;
             user.EmailConfirmed = true;
 

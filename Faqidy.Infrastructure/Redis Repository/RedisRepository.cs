@@ -17,11 +17,12 @@ namespace Faqidy.Infrastructure.Redis_Repository
         {
             _database = redis.GetDatabase();
         }
-        public async Task AddOrUpdateAsyn(string user_id, object otpPayload, TimeSpan timeToLive)
+     
+
+        public async Task AddOrUpdateAsyn(string user_id, OtpPayload otpPayload, TimeSpan timeToLive)
         {
             var json = JsonSerializer.Serialize(otpPayload);
-            await _database.StringSetAsync(user_id, json , timeToLive);
-            
+            await _database.StringSetAsync(user_id, json, timeToLive);
         }
 
         public async Task<OtpPayload> GetAsync(string user_id)

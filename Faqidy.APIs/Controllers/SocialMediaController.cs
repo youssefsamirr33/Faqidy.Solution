@@ -1,4 +1,5 @@
 ﻿using Faqidy.Application.SocialMedia.MissingProfile.Commands.AddMissingProfile;
+using Faqidy.Application.SocialMedia.MissingProfile.Queries;
 using Faqidy.Domain.Entities.SotialMediaModule;
 using Faqidy.Infrastructure.Persistance.Data;
 using MediatR;
@@ -12,12 +13,11 @@ namespace Faqidy.APIs.Controllers
     public class SocialMediaController : BaseController
     {
         private readonly IMediator _mediator;
-        private readonly ApplicationDbContext _context;
+   
 
-        public SocialMediaController(IMediator mediator , ApplicationDbContext context)
+        public SocialMediaController(IMediator mediator)
         {
             _mediator = mediator;
-            _context = context;
         }
 
 
@@ -28,10 +28,10 @@ namespace Faqidy.APIs.Controllers
             return Ok(sender);
         }
 
-        [HttpGet("get-missing-childs")]
-        public async Task<ActionResult<object>> GetMissingChildProfile()
+        [HttpGet("Get-childs-profiles")]
+        public async Task<ActionResult<object>> GetMissingChildProfile([FromQuery]GetMissingProfileQuery query)
         {
-            var result = await _context.Set<MissingChild>().ToListAsync();
+            var result = await _mediator.Send(query);
             return Ok(result);
         }
     }

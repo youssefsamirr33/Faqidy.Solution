@@ -5,10 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 using Twilio.Rest.Api.V2010.Account;
 
-namespace Faqidy.Application.Abstraction.Services.OTP
+namespace Faqidy.Domain.Contract.SMS
 {
-    public interface IOtpServices
+    public interface ISMSServices
     {
-        
+        Task<MessageResource> SendAsync(string phoneNumber, string body);
     }
 }

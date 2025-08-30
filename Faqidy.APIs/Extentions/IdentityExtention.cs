@@ -18,9 +18,9 @@ namespace Faqidy.APIs.Extentions
 
             services.AddIdentity<ApplicationUser , ApplicationRole>(options =>
             {
-                options.SignIn.RequireConfirmedEmail = false;
-                options.SignIn.RequireConfirmedPhoneNumber = false;
-                options.SignIn.RequireConfirmedAccount = false;
+                options.SignIn.RequireConfirmedEmail = true;
+                options.SignIn.RequireConfirmedPhoneNumber = true;
+                options.SignIn.RequireConfirmedAccount = true;
 
                 options.User.RequireUniqueEmail = true;
 

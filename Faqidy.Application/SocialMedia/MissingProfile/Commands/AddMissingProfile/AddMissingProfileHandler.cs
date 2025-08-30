@@ -80,16 +80,24 @@ namespace Faqidy.Application.SocialMedia.MissingProfile.Commands.AddMissingProfi
             // return missing child Dto
             var ReturnedMissingchild = _mapper.Map<MissingChildDto>(missingChild);
 
-            if(ReturnedMissingchild.ChildPhotos is not null)
+            //if(ReturnedMissingchild.ChildPhotos is not null)
+            //{
+            //    foreach(var photoDto in ReturnedMissingchild.ChildPhotos)
+            //    {
+            //        var orginalPhoto = missingChild.Photos.FirstOrDefault(p => p.Id == photoDto.Id);
+            //        if(orginalPhoto is not null)
+            //        {
+            //            photoDto.PhotoUrl = _photosServices.GetPhotoUrl(orginalPhoto.PhotoUrl);
+            //        }
+            //    }
+            //}
+
+            foreach(var photo in ReturnedMissingchild.ChildPhotos)
             {
-                foreach(var photoDto in ReturnedMissingchild.ChildPhotos)
-                {
-                    var orginalPhoto = missingChild.Photos.FirstOrDefault(p => p.Id == photoDto.Id);
-                    if(orginalPhoto is not null)
-                    {
-                        photoDto.PhotoUrl = _photosServices.GetPhotoUrl(orginalPhoto.PhotoUrl);
-                    }
-                }
+                if (photo.PhotoUrl is null)
+                    continue;
+
+                photo.PhotoUrl = _photosServices.GetPhotoUrl(photo.PhotoUrl);
             }
 
             return ReturnedMissingchild;

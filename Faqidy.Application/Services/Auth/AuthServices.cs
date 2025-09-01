@@ -1,10 +1,12 @@
-﻿using Faqidy.Application.Abstraction.DTOs.Auth;
+﻿using AutoMapper;
+using Faqidy.Application.Abstraction.DTOs.Auth;
 using Faqidy.Application.Abstraction.Services.Auth;
 using Faqidy.Application.Exceptions;
 using Faqidy.Domain.Contract.Redis_Repo;
 using Faqidy.Domain.Contract.SMS;
 using Faqidy.Domain.Entities.IdentityModule;
 using Faqidy.Domain.Entities.Otp;
+using Faqidy.Domain.Enums;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -22,7 +24,8 @@ namespace Faqidy.Application.Services.Auth
         SignInManager<ApplicationUser> _signInManager ,
         IOptions<JwtSettings> jwtSettings,
         IRedisRepository _redis,
-        ISMSServices _sms
+        ISMSServices _sms,
+        IMapper _mapper
         ) : IAuthService
     {
         private readonly JwtSettings _jwtSettings = jwtSettings.Value;
@@ -93,7 +96,7 @@ namespace Faqidy.Application.Services.Auth
             return result;
         }
 
-        public async Task<(bool status, string message)> ValidateOtp(string user_id, string code, int MaxAttempts = 5)
+        public async Task<UserDto> ValidateOtp(string user_id, string code, int MaxAttempts = 5)
         {
             var user = await _userManager.FindByIdAsync(user_id);
             if (user is null) throw new NotFoundException($"The user with id: {user_id} is not found. ");
@@ -125,8 +128,77 @@ namespace Faqidy.Application.Services.Auth
 
             var result = await _userManager.UpdateAsync(user);
             if (!result.Succeeded) throw new BadRequestException("The user information is not updated successfuly");
-            return (true, $"The Otp is verified , this is the token {await GenerateTokenAsync(user)}");
+            return new UserDto
+            {
+                Id = user.Id,
+                userName = user.UserName!,
+                Email = user.Email!,
+                Token = await GenerateTokenAsync(user)
+            };
         }
+
+       
+        public async Task<ApplicationUser?> GetUserByEmailOrPhoneNumberAsync(string emailOrPhoneNumber)
+            => emailOrPhoneNumber.Contains("@") ? await _userManager.FindByEmailAsync(emailOrPhoneNumber) :
+                 await _userManager.Users.Where(u => u.PhoneNumber == emailOrPhoneNumber).FirstOrDefaultAsync();
+
+        public async Task<(bool status, string message)> UpdateProfileAsync(ClaimsPrincipal User , ApplicationUserDto model)
+        {
+            var email = User.FindFirstValue(ClaimTypes.Email);
+            if (email is null)
+                throw new UnAuthorizeException("The user is not Authenticated.");
+
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user is null)
+                throw new NotFoundException("Not found user with this email");
+
+            user.FirstName = model.FirstName;
+            user.LastName = model.LastName;
+            user.PhoneNumber = model.PhoneNumber;
+            user.Email = model.Email;
+            user.Address = model.Address;
+            user.City = model.City;
+            user.Country = model.Country;
+            user.NationalId = model.NationalId;
+            user.gender = (Gender) model.gender;
+
+            var updated = await _userManager.UpdateAsync(user);
+            if (!updated.Succeeded)
+                throw new BadRequestException("Error when updated user");
+
+            return (true, "Updated user successfully");
+
+
+        }
+
+        public async Task<(bool status, string message)> DeleteProfileAsync(ClaimsPrincipal User)
+        {
+            var email = User.FindFirstValue(ClaimTypes.Email);
+
+            if (string.IsNullOrEmpty(email))
+                throw new NotFoundException("The email for this user is not founded");
+
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user is null)
+                throw new NotFoundException("The user is not found");
+
+            var deleted = await _userManager.DeleteAsync(user);
+            if (!deleted.Succeeded)
+                throw new BadRequestException($"Error when deleted the user with id: {user.Id}");
+            return (true, $"The User with id: {user.Id} is deleted successfully");
+        }
+
+        public async Task<ApplicationUserDto> GetUserByIdAsync(Guid Id)
+        {
+            var user = await _userManager.FindByIdAsync(Id.ToString());
+
+            if (user is null)
+                throw new NotFoundException($"The USer with Id: {Id} is not found");
+
+            var UserDto = _mapper.Map<ApplicationUserDto>(user);
+            return UserDto;
+        }
+
 
         private string GenerateRandomNumber()
         {
@@ -141,17 +213,18 @@ namespace Faqidy.Application.Services.Auth
             {
                 new Claim(ClaimTypes.Email , user.Email!),
                 new Claim(ClaimTypes.Upn, user.UserName!),
-                new Claim("Id" , user.Id)
+                new Claim("Id" , user.Id),
+                new Claim(ClaimTypes.MobilePhone , user.PhoneNumber!)
             };
 
             var userRoles = await _userManager.GetRolesAsync(user);
-            foreach(var role in userRoles)
+            foreach (var role in userRoles)
             {
                 claims.Add(new Claim(ClaimTypes.Role, role));
             }
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.key));
-            var credintial = new SigningCredentials(key , SecurityAlgorithms.HmacSha256);
+            var credintial = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             // create token object 
             var token = new JwtSecurityToken(
@@ -164,10 +237,7 @@ namespace Faqidy.Application.Services.Auth
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
-        
-        public async Task<ApplicationUser?> GetUserByEmailOrPhoneNumberAsync(string emailOrPhoneNumber)
-            => emailOrPhoneNumber.Contains("@") ? await _userManager.FindByEmailAsync(emailOrPhoneNumber) :
-                 await _userManager.Users.Where(u => u.PhoneNumber == emailOrPhoneNumber).FirstOrDefaultAsync();
 
+       
     }
 }

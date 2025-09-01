@@ -1,6 +1,7 @@
 ﻿using Faqidy.Application.Abstraction.DTOs.Auth;
 using Faqidy.Application.Abstraction.Services.Auth;
-using Faqidy.Application.Abstraction.Services.OTP;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -38,6 +39,33 @@ namespace Faqidy.APIs.Controllers.Auth
             return Ok(await _authService.ValidateOtp(user_id, code));
         }
 
+        [Authorize]
+        [HttpPut("update")]
+        public async Task<IActionResult> UpdateProfile([FromForm]ApplicationUserDto model)
+        {
+            var result = await _authService.UpdateProfileAsync(User, model);
+            return Ok(new
+            {
+                status = result.status,
+                message = result.message
+            });
+        }
 
+        [HttpGet("{Id}/profile")]
+        public async Task<IActionResult> GetUserProfile([FromRoute]Guid Id)
+        {
+            return Ok(await _authService.GetUserByIdAsync(Id));
+        }
+
+        [HttpDelete("delete")]
+        public async Task<IActionResult> DeleteProfile()
+        {
+            var result = await _authService.DeleteProfileAsync(User);
+            return Ok(new
+            {
+                status = result.status,
+                message = result.message
+            });
+        }
     }
 }

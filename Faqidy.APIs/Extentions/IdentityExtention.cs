@@ -40,7 +40,9 @@ namespace Faqidy.APIs.Extentions
             services.AddAuthentication(configuerOption =>
             {
                 configuerOption.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(option =>
+                configuerOption.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+
+            }).AddJwtBearer(JwtBearerDefaults.AuthenticationScheme,option =>
             {
                 option.TokenValidationParameters = new TokenValidationParameters()
                 {

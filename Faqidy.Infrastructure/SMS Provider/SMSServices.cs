@@ -21,10 +21,10 @@ namespace Faqidy.Infrastructure.SMS_Provider
         }
         public async Task<MessageResource> SendAsync(string phoneNumber, string body)
         {
-            TwilioClient.Init("AC55896acce8a056942463635f5d207228", "76407dec148cc64cec5c7608428ee379");
+            TwilioClient.Init(_twilio.AccountSID, _twilio.AuthToken);
 
             var message = await MessageResource.CreateAsync(
-                from : new Twilio.Types.PhoneNumber("+14632858621"),
+                from : new Twilio.Types.PhoneNumber(_twilio.PhoneNumber),
                 to : new Twilio.Types.PhoneNumber(phoneNumber),
                 body : body
                 );

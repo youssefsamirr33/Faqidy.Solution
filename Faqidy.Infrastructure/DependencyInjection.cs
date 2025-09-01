@@ -6,11 +6,6 @@ using Faqidy.Infrastructure.SMS_Provider.Dto;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using StackExchange.Redis;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Faqidy.Infrastructure
 {

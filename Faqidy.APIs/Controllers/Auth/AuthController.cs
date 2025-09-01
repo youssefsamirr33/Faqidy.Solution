@@ -1,5 +1,6 @@
 ﻿using Faqidy.Application.Abstraction.DTOs.Auth;
 using Faqidy.Application.Abstraction.Services.Auth;
+using Faqidy.Application.Common;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -41,14 +42,10 @@ namespace Faqidy.APIs.Controllers.Auth
 
         [Authorize]
         [HttpPut("update")]
-        public async Task<IActionResult> UpdateProfile([FromForm]ApplicationUserDto model)
+        public async Task<ActionResult<Result<string>>> UpdateProfile([FromForm]ApplicationUserDto model)
         {
             var result = await _authService.UpdateProfileAsync(User, model);
-            return Ok(new
-            {
-                status = result.status,
-                message = result.message
-            });
+            return Ok(result);
         }
 
         [HttpGet("{Id}/profile")]

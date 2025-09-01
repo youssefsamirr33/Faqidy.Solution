@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Faqidy.Application.Abstraction.DTOs.Auth;
 using Faqidy.Application.Abstraction.Services.Auth;
+using Faqidy.Application.Common;
 using Faqidy.Application.Exceptions;
 using Faqidy.Domain.Contract.Redis_Repo;
 using Faqidy.Domain.Contract.SMS;
@@ -30,7 +31,7 @@ namespace Faqidy.Application.Services.Auth
     {
         private readonly JwtSettings _jwtSettings = jwtSettings.Value;
 
-        public async Task<UserDto> RegisterAsync(RegisterDto model)
+        public async Task<Result<UserDto>> RegisterAsync(RegisterDto model)
         {
             var user = new ApplicationUser
             {
@@ -45,16 +46,17 @@ namespace Faqidy.Application.Services.Auth
             var result = await _userManager.CreateAsync(user, model.Password);
             if (!result.Succeeded) throw new BadRequestException("Error when registered");
 
-            return new UserDto
+            var dto = new UserDto
             {
                 Id = user.Id,
                 Email = user.Email,
                 userName = user.UserName,
                 Token = "send otp"
             };
+            return Result<UserDto>.Success(dto);
         }
 
-        public async Task<UserDto> LoginAsync(LoginDto model)
+        public async Task<Result<UserDto>> LoginAsync(LoginDto model)
         {
             var user =await GetUserByEmailOrPhoneNumberAsync(model.EmailOrPhoneNumber);
             if(user is null) throw new UnAuthorizeException("Invalid Login");
@@ -65,16 +67,17 @@ namespace Faqidy.Application.Services.Auth
             else if (result.IsNotAllowed) throw new Exception("The Email or Phone Number is not verified.");
             else if (!result.Succeeded) throw new UnAuthorizeException("Invalid login");
 
-            return new UserDto
+            var dto = new UserDto
             {
                 Id = user.Id,
                 Email = user.Email!,
                 userName = user.UserName!,
                 Token = await GenerateTokenAsync(user)
             };
+            return Result<UserDto>.Success(dto);
         }
 
-        public async Task<string> GenerateAndStoreOtp(string user_id, TimeSpan timeToLive)
+        public async Task<Result<string>> GenerateAndStoreOtp(string user_id, TimeSpan timeToLive)
         {
             var code = GenerateRandomNumber();
             var otp = new OtpPayload()
@@ -84,19 +87,19 @@ namespace Faqidy.Application.Services.Auth
             };
             await _redis.AddOrUpdateAsyn(user_id, otp, timeToLive);
 
-            return code;
+            return Result<string>.Success(code);
         }
 
-        public async Task<MessageResource> SendOtp(string phoneNumber, string code)
+        public async Task<Result<MessageResource>> SendOtp(string phoneNumber, string code)
         {
             if (string.IsNullOrEmpty(code)) throw new BadRequestException("The Code is not found.");
             var body = $"This is the otp {code} to verivied your account.";
             var result = await _sms.SendAsync(phoneNumber, body);
 
-            return result;
+            return Result<MessageResource>.Success(result);
         }
 
-        public async Task<UserDto> ValidateOtp(string user_id, string code, int MaxAttempts = 5)
+        public async Task<Result<UserDto>> ValidateOtp(string user_id, string code, int MaxAttempts = 5)
         {
             var user = await _userManager.FindByIdAsync(user_id);
             if (user is null) throw new NotFoundException($"The user with id: {user_id} is not found. ");
@@ -128,21 +131,19 @@ namespace Faqidy.Application.Services.Auth
 
             var result = await _userManager.UpdateAsync(user);
             if (!result.Succeeded) throw new BadRequestException("The user information is not updated successfuly");
-            return new UserDto
+
+            var dto = new UserDto
             {
                 Id = user.Id,
                 userName = user.UserName!,
                 Email = user.Email!,
                 Token = await GenerateTokenAsync(user)
             };
+            return Result<UserDto>.Success(dto);
         }
 
        
-        public async Task<ApplicationUser?> GetUserByEmailOrPhoneNumberAsync(string emailOrPhoneNumber)
-            => emailOrPhoneNumber.Contains("@") ? await _userManager.FindByEmailAsync(emailOrPhoneNumber) :
-                 await _userManager.Users.Where(u => u.PhoneNumber == emailOrPhoneNumber).FirstOrDefaultAsync();
-
-        public async Task<(bool status, string message)> UpdateProfileAsync(ClaimsPrincipal User , ApplicationUserDto model)
+        public async Task<Result<string>> UpdateProfileAsync(ClaimsPrincipal User , ApplicationUserDto model)
         {
             var email = User.FindFirstValue(ClaimTypes.Email);
             if (email is null)
@@ -152,26 +153,22 @@ namespace Faqidy.Application.Services.Auth
             if (user is null)
                 throw new NotFoundException("Not found user with this email");
 
-            user.FirstName = model.FirstName;
-            user.LastName = model.LastName;
-            user.PhoneNumber = model.PhoneNumber;
-            user.Email = model.Email;
-            user.Address = model.Address;
-            user.City = model.City;
-            user.Country = model.Country;
-            user.NationalId = model.NationalId;
-            user.gender = (Gender) model.gender;
+            var mapped = _mapper.Map(model , user);
 
-            var updated = await _userManager.UpdateAsync(user);
+            var updated = await _userManager.UpdateAsync(mapped);
             if (!updated.Succeeded)
-                throw new BadRequestException("Error when updated user");
+            {
+                var error = updated.Errors.Select(e => e.Description);
+                throw new BadRequestException($"Faild to update user {error}");
+            }
+                
 
-            return (true, "Updated user successfully");
+            return Result<string>.Success("Updated User Successfully");
 
 
         }
 
-        public async Task<(bool status, string message)> DeleteProfileAsync(ClaimsPrincipal User)
+        public async Task<Result<string>> DeleteProfileAsync(ClaimsPrincipal User)
         {
             var email = User.FindFirstValue(ClaimTypes.Email);
 
@@ -184,11 +181,14 @@ namespace Faqidy.Application.Services.Auth
 
             var deleted = await _userManager.DeleteAsync(user);
             if (!deleted.Succeeded)
-                throw new BadRequestException($"Error when deleted the user with id: {user.Id}");
-            return (true, $"The User with id: {user.Id} is deleted successfully");
+            {
+                var error = deleted.Errors.Select(e => e.Description);
+                throw new BadRequestException($"Error when deleted the user with id: {user.Id} And error is {error}");
+            }
+            return Result<string>.Success($"The User with id: {user.Id} is deleted successfully");
         }
 
-        public async Task<ApplicationUserDto> GetUserByIdAsync(Guid Id)
+        public async Task<Result<ApplicationUserDto>> GetUserByIdAsync(Guid Id)
         {
             var user = await _userManager.FindByIdAsync(Id.ToString());
 
@@ -196,7 +196,7 @@ namespace Faqidy.Application.Services.Auth
                 throw new NotFoundException($"The USer with Id: {Id} is not found");
 
             var UserDto = _mapper.Map<ApplicationUserDto>(user);
-            return UserDto;
+            return Result<ApplicationUserDto>.Success(UserDto);
         }
 
 
@@ -238,6 +238,10 @@ namespace Faqidy.Application.Services.Auth
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-       
+        public async Task<ApplicationUser?> GetUserByEmailOrPhoneNumberAsync(string emailOrPhoneNumber)
+            => emailOrPhoneNumber.Contains("@") ? await _userManager.FindByEmailAsync(emailOrPhoneNumber) :
+                 await _userManager.Users.Where(u => u.PhoneNumber == emailOrPhoneNumber).FirstOrDefaultAsync();
+
+
     }
 }

@@ -1,4 +1,5 @@
-﻿using Faqidy.Application.SocialMedia.MissingProfile.Commands.AddMissingProfile;
+﻿using Faqidy.Application.Common;
+using Faqidy.Application.SocialMedia.MissingProfile.Commands.AddMissingProfile;
 using Faqidy.Application.SocialMedia.MissingProfile.Queries;
 using Faqidy.Domain.Entities.SotialMediaModule;
 using Faqidy.Infrastructure.Persistance.Data;
@@ -32,6 +33,13 @@ namespace Faqidy.APIs.Controllers
         public async Task<ActionResult<object>> GetMissingChildProfile([FromQuery]GetMissingProfileQuery query)
         {
             var result = await _mediator.Send(query);
+            return Ok(result);
+        }
+
+        [HttpGet("Get-profile/{Id}")]
+        public async Task<ActionResult<Result<object>>> GetMissingChildProfile(Guid Id)
+        {
+            var result = await _mediator.Send(new GetMissingProfileByIdQuery(Id));
             return Ok(result);
         }
     }

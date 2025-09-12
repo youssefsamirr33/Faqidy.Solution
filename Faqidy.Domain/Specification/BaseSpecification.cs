@@ -18,15 +18,17 @@ namespace Faqidy.Domain.Specification
         public int Take { get; set; }
         public int Skip { get; set; }
         public bool IsPagination { get; set ; }
+        public Expression<Func<TEntity, TEntity>> Select { get; set; } = null!;
+        public bool IsProjection { get; set ; }
 
         protected BaseSpecification()
         {
             
         }
 
-        protected BaseSpecification(Tkey id)
+        protected BaseSpecification(Expression<Func<TEntity, bool>> criteria)
         {
-            Criteria = p => p.Id.Equals(id); 
+            Criteria = criteria; 
         }
 
         private protected  void AddInclude(Expression<Func<TEntity, object>> expression)
@@ -39,6 +41,12 @@ namespace Faqidy.Domain.Specification
             IsPagination = true;
             Take = pageSize;
             Skip = pageSize * (pageIndex - 1);
+        }
+
+        private protected void AddProjection(Expression<Func<TEntity, TEntity>> expression)
+        {
+            IsProjection = true;
+            Select = expression;    
         }
         
     }

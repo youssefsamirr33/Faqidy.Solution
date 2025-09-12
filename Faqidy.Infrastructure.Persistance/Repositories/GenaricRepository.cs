@@ -27,13 +27,19 @@ namespace Faqidy.Infrastructure.Persistance.Repositories
             => _context.Set<TEntity>().Update(entity);
 
         public async Task<IReadOnlyList<TEntity>> GetAllWithSpecAsync(IBaseSpecification<TEntity, TKey> spec, bool WithTracking = false)
-            => WithTracking ? await SpecificationEvaluator.GetQuery(_context.Set<TEntity>(), spec).ToListAsync()
-               : await SpecificationEvaluator.GetQuery(_context.Set<TEntity>(), spec).AsNoTracking().ToListAsync();
+            => WithTracking ? await ApplyQuery(_context, spec).ToListAsync()
+               : await ApplyQuery(_context, spec).AsNoTracking().ToListAsync();
 
         public async Task<TEntity?> GetWithSpecAsync(IBaseSpecification<TEntity, TKey> spec)
-            => await SpecificationEvaluator.GetQuery(_context.Set<TEntity>(), spec).FirstOrDefaultAsync();
+            => await ApplyQuery(_context, spec).AsNoTracking().FirstOrDefaultAsync();
 
+        
         public async Task<int> GetCount()
             => await _context.Set<TEntity>().CountAsync();
+
+        private static IQueryable<TEntity> ApplyQuery(ApplicationDbContext _context, IBaseSpecification<TEntity, TKey> spec)
+        {
+            return SpecificationEvaluator.GetQuery(_context.Set<TEntity>(), spec);
+        }
     }
 }

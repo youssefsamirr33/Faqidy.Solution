@@ -26,7 +26,14 @@ namespace Faqidy.Infrastructure.Persistance.Repositories
                 query = query.Skip(spec.Skip).Take(spec.Take); 
             }
 
+
             query = spec.include.Aggregate(query, (crrunetQuery, includeExpression) => crrunetQuery.Include(includeExpression));
+
+
+            if (spec.IsProjection)
+            {
+                query = query.Select(spec.Select);
+            }
 
             return query;
 

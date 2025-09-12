@@ -14,8 +14,10 @@ namespace Faqidy.Domain.Specification.contract
     {
         public Expression<Func<TEntity , bool>> Criteria { get; set; }
         public List<Expression<Func<TEntity , object>>> include { get; set; }
+        public Expression<Func<TEntity , TEntity>> Select { get; set; }
         public int Take { get; set; }
         public int Skip { get; set; }
         public bool IsPagination { get; set; } 
+        public bool IsProjection { get; set; } 
     }
 }

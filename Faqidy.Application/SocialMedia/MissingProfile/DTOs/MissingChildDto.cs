@@ -28,13 +28,8 @@ namespace Faqidy.Application.SocialMedia.MissingProfile.DTOs
         public string? HairColor { get; set; }
         public string? SkinTone { get; set; }
         public CaseStatus Status { get; set; }
-        public bool IsVerified { get; set; }
         public string ContactInfo { get; set; } // json string 
-        public virtual string CreatedBy { get; set; } = null!;
         public DateTime CreateOn { get; set; }
-        public virtual string LastModifiedBy { get; set; }
-        public DateTime LastModifiedOn { get; set; }
-
         public string ReporterId { get; set; }
 
         public List<ChildPhotoDto> ChildPhotos { get; set; }

@@ -1,41 +1,40 @@
 ﻿using Faqidy.Application.Abstraction.DTOs.Auth;
 using Faqidy.Application.Abstraction.Services.Auth;
 using Faqidy.Application.Common;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Twilio.Rest.Api.V2010.Account;
 
 namespace Faqidy.APIs.Controllers.Auth
 {
     public class AuthController(IAuthService _authService) : BaseController
     {
         [HttpPost("login")]
-        public async Task<IActionResult> login(LoginDto model)
+        public async Task<ActionResult<Result<UserDto>>> login(LoginDto model)
         {
             return Ok(await _authService.LoginAsync(model));
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register(RegisterDto model)
+        public async Task<ActionResult<Result<UserDto>>> Register(RegisterDto model)
         {
             return Ok(await _authService.RegisterAsync(model));
         }
 
         [HttpPost("send-otp")]
-        public async Task<ActionResult> Sendotp(string phoneNumber , string code)
+        public async Task<ActionResult<Result<MessageResource>>> Sendotp(string phoneNumber , string code)
         {
             return Ok(await _authService.SendOtp(phoneNumber , code));
         }
 
         [HttpPost("generate-otp")]
-        public async Task<ActionResult> GenerateOtp(string user_id)
+        public async Task<ActionResult<Result<string>>> GenerateOtp(string user_id)
         {
             return Ok(await _authService.GenerateAndStoreOtp(user_id, TimeSpan.FromMinutes(10)));
         }
 
         [HttpPost("confirmed-otp")]
-        public async Task<ActionResult> ConfirmOtp(string user_id , string code)
+        public async Task<ActionResult<Result<UserDto>>> ConfirmOtp(string user_id , string code)
         {
             return Ok(await _authService.ValidateOtp(user_id, code));
         }
@@ -49,20 +48,16 @@ namespace Faqidy.APIs.Controllers.Auth
         }
 
         [HttpGet("{Id}/profile")]
-        public async Task<IActionResult> GetUserProfile([FromRoute]Guid Id)
+        public async Task<ActionResult<Result<ApplicationUserDto>>> GetUserProfile([FromRoute]Guid Id)
         {
             return Ok(await _authService.GetUserByIdAsync(Id));
         }
 
         [HttpDelete("delete")]
-        public async Task<IActionResult> DeleteProfile()
+        public async Task<ActionResult<Result<string>>> DeleteProfile()
         {
             var result = await _authService.DeleteProfileAsync(User);
-            return Ok(new
-            {
-                status = result.status,
-                message = result.message
-            });
+            return Ok(result);
         }
     }
 }

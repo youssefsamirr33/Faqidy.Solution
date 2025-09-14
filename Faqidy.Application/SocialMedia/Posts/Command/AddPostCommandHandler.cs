@@ -43,7 +43,7 @@ namespace Faqidy.Application.SocialMedia.Posts.Command
 
             await _repo.AddAsync(postMapper);
 
-            var result =  await _unitOfWork.CompleteAsync();
+            var result =  await _unitOfWork.CompleteAsync(cancellationToken);
             if (result == 0)
             {
                 _logger.LogError("Error when create a new post");

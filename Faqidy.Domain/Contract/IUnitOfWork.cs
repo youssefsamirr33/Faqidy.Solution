@@ -14,6 +14,6 @@ namespace Faqidy.Domain.Contract
         where TEntity : BaseAuditableEntity<TKey>
         where TKey : IEquatable<TKey>;
 
-        Task<int> CompleteAsync();
+        Task<int> CompleteAsync(CancellationToken cancellationToken);
     }
 }

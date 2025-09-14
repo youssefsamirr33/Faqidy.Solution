@@ -67,7 +67,7 @@ namespace Faqidy.Application.SocialMedia.MissingProfile.Commands.AddMissingProfi
                 // demo 
                 var repo = _unitOfWork.GetRepository<MissingChild, Guid>();
                 await repo.AddAsync(missingChild);
-                var result = await _unitOfWork.CompleteAsync();
+                var result = await _unitOfWork.CompleteAsync(cancellationToken);
 
                 if (result <= 0)
                     _logger.LogError("Error When Save Changes for add new missing child");

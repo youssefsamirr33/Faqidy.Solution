@@ -28,8 +28,8 @@ namespace Faqidy.Infrastructure.Persistance.Unit_Of_Work
             return repo;    
         }
 
-        public async Task<int> CompleteAsync()
-            => await _context.SaveChangesAsync();
+        public async Task<int> CompleteAsync(CancellationToken cancellationToken)
+            => await _context.SaveChangesAsync(cancellationToken);
 
         public async ValueTask DisposeAsync()
             => await _context.DisposeAsync();

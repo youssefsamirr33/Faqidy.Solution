@@ -3,6 +3,7 @@ using Faqidy.Application.Abstraction.DTOs.Auth;
 using Faqidy.Application.Abstraction.Services;
 using Faqidy.Application.SocialMedia.MissingProfile.Commands.AddMissingProfile;
 using Faqidy.Application.SocialMedia.MissingProfile.DTOs;
+using Faqidy.Application.SocialMedia.Posts.Dtos;
 using Faqidy.Domain.Entities.IdentityModule;
 using Faqidy.Domain.Entities.sotialMediaModule;
 using Faqidy.Domain.Entities.SotialMediaModule;
@@ -29,6 +30,13 @@ namespace Faqidy.Application.Mapping
                 .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src => src.PhotoUrl));
 
             CreateMap<ApplicationUser, ApplicationUserDto>().ReverseMap();
+
+            CreateMap<PostDto, SocialPost>()
+                .ForMember(dest => dest.ChildId , otp => otp.MapFrom(src => src.ChildProfileId));
+
+            CreateMap<SocialPost, PostReponseDto>()
+                .ForMember(dest => dest.UserFullName, opt => opt.MapFrom(src => src.User.FirstName +" "+ src.User.LastName))
+                .ForMember(dest => dest.ChildProfileId, otp => otp.MapFrom(src => src.ChildId));
                
         }
     }

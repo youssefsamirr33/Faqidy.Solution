@@ -7,7 +7,6 @@ using Faqidy.Domain.Contract.Redis_Repo;
 using Faqidy.Domain.Contract.SMS;
 using Faqidy.Domain.Entities.IdentityModule;
 using Faqidy.Domain.Entities.Otp;
-using Faqidy.Domain.Enums;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;

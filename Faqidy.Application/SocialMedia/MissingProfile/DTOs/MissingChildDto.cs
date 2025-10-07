@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Faqidy.Application.SocialMedia.MissingProfile.DTOs
 {
-    internal class MissingChildDto
+    public class MissingChildDto
     {
         public Guid Id { get; set; }
         public string ChildName { get; set; }

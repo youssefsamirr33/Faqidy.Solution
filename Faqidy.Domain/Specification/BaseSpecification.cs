@@ -20,6 +20,7 @@ namespace Faqidy.Domain.Specification
         public bool IsPagination { get; set ; }
         public Expression<Func<TEntity, TEntity>> Select { get; set; } = null!;
         public bool IsProjection { get; set ; }
+        public List<string> thenInclude { get; set; } = new();
 
         protected BaseSpecification()
         {
@@ -34,6 +35,11 @@ namespace Faqidy.Domain.Specification
         private protected  void AddInclude(Expression<Func<TEntity, object>> expression)
         {
             include.Add(expression);
+        }
+
+        private protected void AddThenInclude(string expression)
+        {
+            thenInclude.Add(expression);
         }
 
         private protected void AddPagination(int pageSize , int pageIndex)

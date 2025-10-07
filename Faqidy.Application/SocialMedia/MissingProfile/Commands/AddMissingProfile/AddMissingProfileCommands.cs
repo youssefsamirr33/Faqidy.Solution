@@ -1,13 +1,7 @@
 ﻿using Faqidy.Application.SocialMedia.MissingProfile.DTOs;
-using Faqidy.Domain.Entities.SotialMediaModule;
 using Faqidy.Domain.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Faqidy.Application.SocialMedia.MissingProfile.Commands.AddMissingProfile
 {

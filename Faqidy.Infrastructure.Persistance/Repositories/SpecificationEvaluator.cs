@@ -21,14 +21,16 @@ namespace Faqidy.Infrastructure.Persistance.Repositories
             if (spec.Criteria is not null)
                 query = query.Where(spec.Criteria);  // _dbcotnext.set<TEntity>().Where(p => p.id == id)
 
-            if (spec.IsPagination)
-            {
-                query = query.Skip(spec.Skip).Take(spec.Take); 
-            }
-
+           
 
             query = spec.include.Aggregate(query, (crrunetQuery, includeExpression) => crrunetQuery.Include(includeExpression));
 
+            query = spec.thenInclude.Aggregate(query, (crrunetQuery, ThenIncludeExpression) => crrunetQuery.Include(ThenIncludeExpression));
+
+            if (spec.IsPagination)
+            {
+                query = query.Skip(spec.Skip).Take(spec.Take);
+            }
 
             if (spec.IsProjection)
             {

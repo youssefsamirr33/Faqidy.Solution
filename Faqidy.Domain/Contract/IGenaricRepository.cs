@@ -19,5 +19,6 @@ namespace Faqidy.Domain.Contract
         void Update(TEntity entity);
         void Delete(TEntity entity);
         Task<int> GetCount();
+        Task<int> GetCountForlikesOrComments(Guid PostId);
     }
 }

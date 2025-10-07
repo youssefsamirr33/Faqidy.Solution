@@ -2,11 +2,6 @@
 using Faqidy.Domain.Contract;
 using Faqidy.Infrastructure.Persistance.Data;
 using Faqidy.Infrastructure.Persistance.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Faqidy.Infrastructure.Persistance.Unit_Of_Work
 {

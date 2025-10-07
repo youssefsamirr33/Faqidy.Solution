@@ -19,8 +19,4 @@
     <ProjectReference Include="..\Faqidy.Infrastructure\Faqidy.Infrastructure.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="SocialMedia\Posts\Queries\" />
-  </ItemGroup>
-
 </Project>

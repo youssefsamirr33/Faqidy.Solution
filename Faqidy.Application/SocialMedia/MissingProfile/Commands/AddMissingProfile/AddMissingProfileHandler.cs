@@ -6,11 +6,6 @@ using Faqidy.Domain.Entities.sotialMediaModule;
 using Faqidy.Domain.Entities.SotialMediaModule;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Faqidy.Application.SocialMedia.MissingProfile.Commands.AddMissingProfile
 {

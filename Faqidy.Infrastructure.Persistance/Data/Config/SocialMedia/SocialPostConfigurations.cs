@@ -18,7 +18,7 @@ namespace Faqidy.Infrastructure.Persistance.Data.Config.SocialMedia
             base.Configure(builder);
 
             builder.Property(s => s.Title).HasMaxLength(500);
-            builder.Property(s => s.Content).HasMaxLength(30);
+            builder.Property(s => s.Content).HasMaxLength(500);
             builder.Property(s => s.Location).IsRequired().HasMaxLength(30);
             builder.Property(s => s.PostType).HasConversion(d => d.ToString() , r => (PostType) Enum.Parse(typeof(PostType) , r));
 

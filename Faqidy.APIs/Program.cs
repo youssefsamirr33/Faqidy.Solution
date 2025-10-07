@@ -2,13 +2,9 @@ using Faqidy.APIs.Errors;
 using Faqidy.APIs.Extentions;
 using Faqidy.APIs.Middlewares;
 using Faqidy.Application;
-using Faqidy.Application.Mapping;
 using Faqidy.Infrastructure;
 using Faqidy.Infrastructure.Persistance;
-using Faqidy.Infrastructure.Persistance.Data;
-using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using System.Reflection;
 
 namespace Faqidy.APIs
 {

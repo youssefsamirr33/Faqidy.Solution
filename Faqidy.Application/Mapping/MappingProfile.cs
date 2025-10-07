@@ -37,6 +37,13 @@ namespace Faqidy.Application.Mapping
             CreateMap<SocialPost, PostReponseDto>()
                 .ForMember(dest => dest.UserFullName, opt => opt.MapFrom(src => src.User.FirstName +" "+ src.User.LastName))
                 .ForMember(dest => dest.ChildProfileId, otp => otp.MapFrom(src => src.ChildId));
+
+            CreateMap<SocialPost, PostToReturnSpecDataDto>()
+                .ForMember(dest => dest.PostId, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.UserFullName, opt => opt.MapFrom(src => src.User.FirstName + " " + src.User.LastName))
+                .ForMember(dest => dest.UserPicProfile, opt => opt.MapFrom(src => src.User.ProfilePicture))
+                .ForMember(dest => dest.Content, opt => opt.MapFrom(src => src.Content))
+                .ForMember(dest => dest.ChildProfile , opt => opt.MapFrom(src => src.Child));
                
         }
     }

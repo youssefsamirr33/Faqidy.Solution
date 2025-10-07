@@ -37,9 +37,14 @@ namespace Faqidy.Infrastructure.Persistance.Repositories
         public async Task<int> GetCount()
             => await _context.Set<TEntity>().CountAsync();
 
+
+        public async Task<int> GetCountForlikesOrComments(Guid PostId)
+            => await _context.Set<TEntity>().Where(p => p.Id.Equals(PostId)).CountAsync();
+
         private static IQueryable<TEntity> ApplyQuery(ApplicationDbContext _context, IBaseSpecification<TEntity, TKey> spec)
         {
             return SpecificationEvaluator.GetQuery(_context.Set<TEntity>(), spec);
         }
+
     }
 }
